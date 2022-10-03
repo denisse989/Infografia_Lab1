@@ -1,6 +1,6 @@
 from os import remove
 from pickle import TRUE
-
+import time
 from numpy import place
 import pygame 
 from pygame.locals import K_SPACE,K_RETURN,K_UP
@@ -11,7 +11,7 @@ from scene import *
 # configuraciones
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
-list_hearts = [] 
+ 
 
 class App:
     def __init__(self, screen_width, screen_height):
@@ -23,9 +23,10 @@ class App:
         pygame.display.set_caption('GHOST INVASION')
         pygame.mixer.music.load("assets/it.mp3")
         pygame.mixer.music.set_volume(0.2)
-        self.musica=pygame.mixer.music.play(0,0)
+        self.musica=pygame.mixer.music.play(0,20)
         self.logo = pygame.image.load("assets/icon.png")
         pygame.display.set_icon(self.logo)
+       
         self.backGround: Background =None
         self.backGround2: Background2 =None
         self.hearts: Heart =None
@@ -73,6 +74,8 @@ class App:
     def update(self, keys):
         # self.screen.blit(self.backGround.surf, self.backGround.rect)   
         
+        
+        
         self.screen.blit(self.player.surf, self.player.rect)
         self.player.update(keys)
        
@@ -92,8 +95,7 @@ class App:
         colisiones= pygame.sprite.spritecollide(self.player, self.enemies,True)
             
         for colision in colisiones:
-            if(self.life>1):
-                print("bloque 3")
+            if(self.life>0):
                 self.life-=1
                 if(self.life==2):
                     self.add_heart_black(Heart_Black(100,20))
@@ -101,32 +103,33 @@ class App:
                 if(self.life==1):
                     self.add_heart_black(Heart_Black(60,20))
                     self.screen.blit(self.hearts_black.surf, (60,20))
+                if(self.life==0):
+                    self.life-=1
+                    self.add_heart_black(Heart_Black(20,20))
+                    self.screen.blit(self.hearts_black.surf, (20,20))
+                    self.player.kill()
                     
-                print(self.life) 
-            elif self.life==1:
-                self.life-=1
-                self.add_heart_black(Heart_Black(20,20))
-                self.screen.blit(self.hearts_black.surf, (20,20))
-                self.player.kill()
-                
-            else:    
+                print(self.life)  
+            else: 
                 self.add_background2(Background2())
                 pygame.mixer.music.stop()
-                #self.screen.blit(self.player_dead.surf, self.player_dead.rect)
-                self.add_player_dead(Player_dead())
+                self.enemies.remove(Enemy())
+                self.add_player_dead(Player_dead()) 
+                #time.sleep(3)
+                #self.is_running = False   
                 break
-                #self.player_dead.update(keys)
-                #self.is_running = False
+                
+                
             
         # detectar colisiones entre proyectiles y enemies
         pygame.sprite.groupcollide(
-            self.player.projectiles,    # primer sprite group
-            self.enemies,               # segundo sprite group
-            True,                       # True = invocar kill() si sprites del grupo 1 colisionan
-            True                        # igual que arriba pero para el 2do grupo
+            self.player.projectiles,    
+            self.enemies,               
+            True,                       
+            True                        
             )
         pygame.display.flip()
-        # para mantener 30 frames por segundo
+        
         self.clock.tick(30)
         
     def run(self):

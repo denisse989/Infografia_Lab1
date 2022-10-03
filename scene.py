@@ -1,4 +1,4 @@
-import time
+
 import pygame
 from pygame.sprite import Sprite
 from pygame.locals import K_LEFT, K_RIGHT, RLEACCEL,K_UP

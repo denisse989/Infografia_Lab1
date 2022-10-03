@@ -12,7 +12,7 @@ class Player(Sprite):
         
         self.surf = pygame.image.load("assets/principal.png").convert()
         self.surf.set_colorkey((255, 255, 255), RLEACCEL)
-        self.surf = pygame.transform.scale(self.surf, (90, 90))
+        self.surf = pygame.transform.scale(self.surf, (100, 100))
         self.rect = self.surf.get_rect(center=(
             50,
             570
@@ -36,7 +36,7 @@ class Projectile(Sprite):
     def __init__(self, pos_x, pos_y):
         super().__init__()
         self.surf = pygame.image.load("assets/pez.png").convert()
-        #self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+        self.surf.set_colorkey((0,0,0), RLEACCEL)
         self.surf = pygame.transform.scale(self.surf, (50, 50))
         self.rect = self.surf.get_rect(center=(pos_x+40, pos_y))
         self.speed = 15
@@ -50,7 +50,7 @@ class Enemy(Sprite):
         super().__init__()
         # crear una superficie
         self.surf = pygame.image.load("assets/enemy.png").convert()
-        #self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+        self.surf.set_colorkey((0,0,0), RLEACCEL)
         self.surf = pygame.transform.scale(self.surf, (90, 90))
         
         self.rect = self.surf.get_rect(center=(
@@ -78,4 +78,9 @@ class Heart(Sprite):
             pos_x,
             pos_y
         ))
+    def update(self):
+        self.speed = random.randint(2, 6)
+        self.rect.move_ip(0,-self.speed)
+        if self.rect.right< 0:
+            self.kill()
         
